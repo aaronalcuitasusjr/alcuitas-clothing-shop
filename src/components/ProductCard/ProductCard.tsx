@@ -1,4 +1,4 @@
-import { useState, useContext, FC } from "react";
+import { useState, useContext, useEffect } from "react";
 import { add, remove } from "../../reducers/cart";
 
 import {
@@ -10,50 +10,52 @@ import {
 } from "./ProductCard.styled";
 
 import { CartContext, CartDispatchContext } from "../../contexts";
+import { Product } from "../../models";
 
-interface ProductCardProps {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-  currIsInCart: boolean;
-}
-
-export const ProductCard: FC<ProductCardProps> = (props): JSX.Element => {
+export const ProductCard = ({ id, name, imageUrl, price }: Product) => {
   const cart = useContext(CartContext);
   const dispatch = useContext(CartDispatchContext);
-  const [isInCart, setIsInCart] = useState(props.currIsInCart);
+
+  function getIsInCart(id: number, cart: Product[]) {
+    var isFound = false;
+    cart.map((product) => {
+      if (product.id == id) {
+        isFound = true;
+        return;
+      }
+    });
+    return isFound;
+  }
 
   return (
-    <Wrapper background={props.imageUrl}>
+    <Wrapper background={imageUrl}>
       <AddButton
-        isInCart={isInCart}
+        isInCart={getIsInCart(id, cart)}
         onClick={() => {
-          isInCart
+          getIsInCart(id, cart)
             ? dispatch(
                 remove({
-                  id: props.id,
-                  name: props.name,
-                  price: props.price,
-                  imageUrl: props.imageUrl,
+                  id: id,
+                  name: name,
+                  price: price,
+                  imageUrl: imageUrl,
                 })
               )
             : dispatch(
                 add({
-                  id: props.id,
-                  name: props.name,
-                  price: props.price,
-                  imageUrl: props.imageUrl,
+                  id: id,
+                  name: name,
+                  price: price,
+                  imageUrl: imageUrl,
                 })
               );
-          setIsInCart(!isInCart);
         }}
       >
-        <p>{isInCart ? "−" : "+"}</p>
+        <p>{getIsInCart(id, cart) ? "−" : "+"}</p>
       </AddButton>
       <TextContainer>
-        <Title>{props.name}</Title>
-        <SubTitle>{props.price}.00$</SubTitle>
+        <Title>{name}</Title>
+        <SubTitle>{price}.00$</SubTitle>
       </TextContainer>
     </Wrapper>
   );

@@ -1,7 +1,9 @@
-import { ProductsWrapper, Title } from './Products.styled';
-
-import { ProductCard } from '../ProductCard';
-import { shopData } from '../../data';
+import { useContext } from "react";
+import { CartContext } from "../../contexts";
+import { ProductsWrapper, Title } from "./Products.styled";
+import { ProductCard } from "../ProductCard";
+import { shopData } from "../../data";
+import { Product } from "../../models";
 
 export const Products = () => {
   return (

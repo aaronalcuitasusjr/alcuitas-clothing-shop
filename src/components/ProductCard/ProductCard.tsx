@@ -1,22 +1,59 @@
+import { useState, useContext, FC } from "react";
+import { add, remove } from "../../reducers/cart";
+
 import {
   AddButton,
   SubTitle,
   TextContainer,
   Title,
   Wrapper,
-} from './ProductCard.styled';
+} from "./ProductCard.styled";
 
-import { Product } from '../../models';
+import { CartContext, CartDispatchContext } from "../../contexts";
 
-export const ProductCard = ({ name, imageUrl, price }: Product) => {
+interface ProductCardProps {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl: string;
+  currIsInCart: boolean;
+}
+
+export const ProductCard: FC<ProductCardProps> = (props): JSX.Element => {
+  const cart = useContext(CartContext);
+  const dispatch = useContext(CartDispatchContext);
+  const [isInCart, setIsInCart] = useState(props.currIsInCart);
+
   return (
-    <Wrapper background={imageUrl}>
-      <AddButton isInCart={false} onClick={() => console.log('Implement Me')}>
-        <p>+</p>
+    <Wrapper background={props.imageUrl}>
+      <AddButton
+        isInCart={isInCart}
+        onClick={() => {
+          isInCart
+            ? dispatch(
+                remove({
+                  id: props.id,
+                  name: props.name,
+                  price: props.price,
+                  imageUrl: props.imageUrl,
+                })
+              )
+            : dispatch(
+                add({
+                  id: props.id,
+                  name: props.name,
+                  price: props.price,
+                  imageUrl: props.imageUrl,
+                })
+              );
+          setIsInCart(!isInCart);
+        }}
+      >
+        <p>{isInCart ? "−" : "+"}</p>
       </AddButton>
       <TextContainer>
-        <Title>{name}</Title>
-        <SubTitle>{price}.00$</SubTitle>
+        <Title>{props.name}</Title>
+        <SubTitle>{props.price}.00$</SubTitle>
       </TextContainer>
     </Wrapper>
   );

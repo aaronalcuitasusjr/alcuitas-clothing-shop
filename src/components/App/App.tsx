@@ -6,15 +6,15 @@ import { LinksWrapper, TitleWrapper, Wrapper } from "./App.styled";
 import { Cart } from "../Cart";
 import { Products } from "../Products";
 
-import { CartContext, CartDispatchContext, initialCart } from "../../contexts";
-import { cartReducer } from "../../reducers/cart";
+import { ShopContext, ShopDispatchContext, initialShop } from "../../contexts";
+import { shopReducer } from "../../reducers/shop";
 
 export const App = () => {
-  const [cart, dispatch] = useReducer(cartReducer, initialCart);
+  const [shop, dispatch] = useReducer(shopReducer, initialShop);
 
   return (
-    <CartContext.Provider value={cart}>
-      <CartDispatchContext.Provider value={dispatch}>
+    <ShopContext.Provider value={shop}>
+      <ShopDispatchContext.Provider value={dispatch}>
         <Wrapper>
           <TitleWrapper>
             <h1>Clothing Shop Starter Project</h1>
@@ -28,7 +28,7 @@ export const App = () => {
             <Route path="/cart" element={<Cart />} />
           </Routes>
         </Wrapper>
-      </CartDispatchContext.Provider>
-    </CartContext.Provider>
+      </ShopDispatchContext.Provider>
+    </ShopContext.Provider>
   );
 };

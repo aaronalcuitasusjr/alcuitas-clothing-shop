@@ -3,6 +3,7 @@ import { Product } from "../../models";
 export enum ShopActionType {
   CART_ADD = "cart_add",
   CART_REMOVE = "cart_remove",
+  CART_UPDATE = "cart_update",
   WISH_ADD = "wish_add",
   WISH_REMOVE = "wish_remove",
 }
@@ -19,6 +20,11 @@ export const cartAdd = (cart: Product[]): ShopAction => ({
 
 export const cartRemove = (cart: Product[]): ShopAction => ({
   type: ShopActionType.CART_REMOVE,
+  payload: cart,
+});
+
+export const cartUpdate = (cart: Product[]): ShopAction => ({
+  type: ShopActionType.CART_UPDATE,
   payload: cart,
 });
 

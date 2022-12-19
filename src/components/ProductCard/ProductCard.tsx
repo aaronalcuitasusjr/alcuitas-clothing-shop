@@ -1,61 +1,111 @@
 import { useState, useContext, useEffect } from "react";
-import { add, remove } from "../../reducers/cart";
+import { cartAdd, cartRemove, wishAdd, wishRemove } from "../../reducers/shop";
 
 import {
-  AddButton,
+  CartAddButton,
+  WishAddButton,
   SubTitle,
   TextContainer,
   Title,
   Wrapper,
 } from "./ProductCard.styled";
+import {
+  MdOutlineAddShoppingCart,
+  MdOutlineRemoveShoppingCart,
+} from "react-icons/md";
 
-import { CartContext, CartDispatchContext } from "../../contexts";
+import { ShopContext, ShopDispatchContext } from "../../contexts";
 import { Product } from "../../models";
 
-export const ProductCard = ({ id, name, imageUrl, price }: Product) => {
-  const cart = useContext(CartContext);
-  const dispatch = useContext(CartDispatchContext);
+import Tooltip from "@material-ui/core/Tooltip";
 
-  function getIsInCart(id: number, cart: Product[]) {
-    var isFound = false;
-    cart.map((product) => {
-      if (product.id == id) {
-        isFound = true;
-        return;
-      }
-    });
-    return isFound;
-  }
+export const ProductCard = (product: Product) => {
+  const shop = useContext(ShopContext);
+  const dispatch = useContext(ShopDispatchContext);
+  const [isInCart, setIsInCart] = useState(false);
+  const [isInWish, setIsInWish] = useState(false);
+
+  useEffect(() => {
+    const productIsInCart = shop.cart.find((item) => item.id === product.id);
+    const productIsInWish = shop.wishlist.find(
+      (item) => item.id === product.id
+    );
+
+    if (productIsInCart && productIsInWish) {
+      setIsInCart(true);
+      setIsInWish(true);
+    } else if (productIsInCart && !productIsInWish) {
+      setIsInCart(true);
+      setIsInWish(false);
+    } else if (!productIsInCart && productIsInWish) {
+      setIsInCart(false);
+      setIsInWish(true);
+    } else {
+      setIsInCart(false);
+      setIsInWish(false);
+    }
+  }, [shop.cart, shop.wishlist, product.id]);
+
+  const handleAddToCart = (product: Product) => {
+    dispatch(cartAdd([...shop.cart, product]));
+  };
+
+  const handleRemoveFromCart = (product: Product) => {
+    dispatch(cartRemove(shop.cart.filter((item) => item.id !== product.id)));
+  };
+
+  const handleAddToWish = (product: Product) => {
+    dispatch(wishAdd([...shop.wishlist, product]));
+  };
+
+  const handleRemoveFromWish = (product: Product) => {
+    dispatch(
+      wishRemove(shop.wishlist.filter((item) => item.id !== product.id))
+    );
+  };
 
   return (
-    <Wrapper background={imageUrl}>
-      <AddButton
-        isInCart={getIsInCart(id, cart)}
-        onClick={() => {
-          getIsInCart(id, cart)
-            ? dispatch(
-                remove({
-                  id: id,
-                  name: name,
-                  price: price,
-                  imageUrl: imageUrl,
-                })
-              )
-            : dispatch(
-                add({
-                  id: id,
-                  name: name,
-                  price: price,
-                  imageUrl: imageUrl,
-                })
-              );
-        }}
+    <Wrapper background={product.imageUrl}>
+      <Tooltip
+        title={isInCart ? "Remove From Cart" : "Add To Cart"}
+        placement="bottom"
+        arrow
       >
-        <p>{getIsInCart(id, cart) ? "−" : "+"}</p>
-      </AddButton>
+        <CartAddButton
+          isInCart={isInCart}
+          onClick={() => {
+            isInCart ? handleRemoveFromCart(product) : handleAddToCart(product);
+          }}
+        >
+          <span>
+            {isInCart ? (
+              <MdOutlineRemoveShoppingCart />
+            ) : (
+              <MdOutlineAddShoppingCart />
+            )}{" "}
+          </span>
+        </CartAddButton>
+      </Tooltip>
+
+      <Tooltip
+        title={isInWish ? "Remove From Wishlist" : "Add To Wishlist"}
+        placement="bottom"
+        arrow
+      >
+        <WishAddButton
+          id="wish-add-btn"
+          isInWish={isInWish}
+          onClick={() => {
+            isInWish ? handleRemoveFromWish(product) : handleAddToWish(product);
+          }}
+        >
+          <p>{isInWish ? "−" : "+"}</p>
+        </WishAddButton>
+      </Tooltip>
+
       <TextContainer>
-        <Title>{name}</Title>
-        <SubTitle>{price}.00$</SubTitle>
+        <Title>{product.name}</Title>
+        <SubTitle>{product.price}.00$</SubTitle>
       </TextContainer>
     </Wrapper>
   );

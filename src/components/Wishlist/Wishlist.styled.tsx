@@ -6,10 +6,6 @@ export const Title = styled.p`
   margin-top: 20px;
 `;
 
-export const TitleContainer = styled.div`
-  display: grid;
-`;
-
 export const ProductsWrapper = styled.div`
   display: grid;
   width: fit-content;

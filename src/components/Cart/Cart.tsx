@@ -6,14 +6,10 @@ import { QuantityField } from "../QuantityField";
 
 export const Cart = () => {
   const shop = useContext(ShopContext);
-  const [total, setTotal] = useState(getCartTotal);
+  const [total, setTotal] = useState(getCartTotal());
 
   useEffect(() => {
-    var cartTotal = 0;
-    shop.cart.forEach(
-      (product) => (cartTotal += product.price * product.quantity)
-    );
-    setTotal(cartTotal);
+    setTotal(getCartTotal());
   }, [shop.cart]);
 
   function getCartTotal() {
@@ -27,7 +23,11 @@ export const Cart = () => {
   return (
     <>
       <TitleContainer>
-        <Title>Your cart total is {total}.00$</Title>
+        <Title>
+          {shop.cart && shop.cart.length
+            ? `Your cart total is ${total}.00$`
+            : "There are no products in your cart"}
+        </Title>
         {shop.cart && shop.cart.length ? <QuantityField /> : null}
       </TitleContainer>
       <ProductsWrapper>

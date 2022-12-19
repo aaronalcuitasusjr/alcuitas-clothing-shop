@@ -8,7 +8,11 @@ export const Wishlist = () => {
 
   return (
     <>
-      <Title>Your Wishlist</Title>
+      <Title>
+        {shop.wishlist && shop.wishlist.length
+          ? "Your Wishlist"
+          : "There are no products in your wishlist"}
+      </Title>
       <ProductsWrapper>
         {shop.wishlist.map((data, index) => (
           <ProductCard key={index} {...data} />
